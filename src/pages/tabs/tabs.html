@@ -1,0 +1,38 @@
+<!--<ion-tabs>
+  <ion-tab [root]="tab1Root" [tabTitle]="tab1Title" tabIcon="home"></ion-tab>
+  <ion-tab [root]="tab2Root" [tabTitle]="tab2Title" tabIcon="search"></ion-tab>
+  <ion-tab [root]="tab3Root" [tabTitle]="tab3Title" tabIcon="cog"></ion-tab>
+</ion-tabs>-->
+<ion-content scroll="false">
+  <div class="splash-bg"></div>
+  <div class="splash-info">
+    <div class="splash-logo"></div>
+    <div class="splash-intro" *ngIf="!listening">
+      {{ 'WELCOME_INTRO' | translate }}
+    </div>
+  </div>
+  <div  *ngIf="!listening">
+    <div padding>
+      <p>Click "Make Voice Payment" below to initiate a voice based transfer.</p>
+    </div>
+    <div padding>
+      <button ion-button color="primary" block (click)="makePayment()">{{ 'VOICE_PAYMENT_BUTTON' | translate }}</button>
+    </div>
+  </div>
+  <div  *ngIf="listening">
+    <div padding style="margin-left: 120px;">
+      <circle-progress 
+      [percent]="getPercent()"
+    [animation]="false"
+    [subtitle]="formatSubtitle()"
+    [title]="formatTitle()"
+    [showUnits]="false"
+    ></circle-progress>
+    </div>
+    
+    <div padding>
+      <button ion-button color="primary" block (click)="cancelPayment()">{{ 'CANCEL_BUTTON' | translate }}</button>
+    </div>
+  </div>
+  
+</ion-content>

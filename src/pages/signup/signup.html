@@ -1,0 +1,30 @@
+
+
+
+<ion-content>
+  <div class="splash-bg"></div>
+  <div class="splash-info">
+    <div class="splash-logo"></div>
+    <div class="splash-intro">
+      {{ 'FIRST_TIME_REG' | translate }}
+    </div>
+  </div>
+  <div *ngIf="!enrollmentComplete">
+    <div padding>
+      <p *ngIf="!listening">We need your voice for future identiciation. Make sure you are in a noise free environment and click '{{ 'FIRST_TIME_REG' | translate }}' button below.</p>
+      <p *ngIf="listening">Please repeat the below phrases:</p>
+      <p *ngIf="listening"><b>{{currentSentence}}</b></p>
+      <p *ngIf="listening"> Or keep talking anything for {{timeLeft}}s..</p>
+    </div>
+    <div padding *ngIf="!listening">
+      <button ion-button color="primary" block (click)="listenAndEnrollVoice()">{{ 'FIRST_TIME_REG' | translate }}</button>
+    </div>
+    <progress-bar [progress]="getProgress()" [color]="'#488aff'" *ngIf="listening">
+    </progress-bar>
+</div>
+<div *ngIf="enrollmentComplete">
+  
+
+</div>
+  
+</ion-content>
