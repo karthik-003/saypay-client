@@ -217,6 +217,7 @@ function pollForEnrollment(location, profileId){
 
 				// ask for a name to associated with the ID to make the identification nicer
 				//var name = window.prompt('Who was that talking?');
+				profileIds = [];
 				profileIds.push(new Profile(nickName, profileId));
 				console.log(profileId + ' is now mapped to ' + nickName);
 				localStorage.setItem("enrollmentDone","true");
@@ -244,11 +245,18 @@ function pollForEnrollment(location, profileId){
 
 // 2. Start the browser listening, listen for 10 seconds, pass the audio stream to "identifyProfile"
 function startListeningForIdentification(){
+	profileIds = []; //get profileId enrolled from localStorage.
+	var nickName = localStorage.getItem('speaker');
+	var profileId = localStorage.getItem('profileId');
+	profileIds.push(new Profile(nickName, profileId));
 	if (profileIds.length > 0 ){
 		//log.value='';
 		console.log('I\'m listening... just start talking for a few seconds...');
 		//log.value='Maybe read this: \n' + thingsToRead[Math.floor(Math.random() * thingsToRead.length)];
-		navigator.getUserMedia({audio: true}, function(stream){onMediaSuccess(stream, identifyProfile, 10,true)}, onMediaError);
+		localStorage.removeItem("listening");
+		localStorage.setItem("listening",true);
+		localStorage.removeItem("recognitionDone");
+		navigator.getUserMedia({audio: true}, function(stream){onMediaSuccess(stream, identifyProfile, 5,true)}, onMediaError);
 	} else {
 		console.log('No profiles enrolled yet! Click the other button...');
 	}
@@ -261,6 +269,11 @@ function identifyProfile(blob){
 
 	// comma delimited list of profile IDs we're interested in comparing against
 	//var Ids = profileIds.map(x => x.profileId).join();
+	localStorage.removeItem("recognitionSarted");
+	localStorage.setItem("listening",false);
+	localStorage.setItem("recognitionSarted",true);
+	console.log("Sending to identification end point.");
+
 	var Ids;
 	if (localStorage.getItem("profileId")){
 		verificationProfile.profileId = localStorage.getItem("profileId");
@@ -296,7 +309,7 @@ function identifyProfile(blob){
 // Ping the status endpoint to see if the identification has completed
 function pollForIdentification(location,targetId){
 	var identifiedInterval;
-
+	var responseRecieved = false;
 	// hit the endpoint every few seconds 
 	identifiedInterval = setInterval(function()
 	{
@@ -311,28 +324,35 @@ function pollForIdentification(location,targetId){
 
 			var json = JSON.parse(request.responseText);
 			var txtInput;
-			if (json.status == 'succeeded')
+			if (json.status == 'succeeded' && !responseRecieved)
 			{
+				responseRecieved = true;
 				// Identification process has completed
 				clearInterval(identifiedInterval);
+				localStorage.setItem("recognitionSarted",false);
+				localStorage.setItem("recognitionDone",json.status);
 				if(targetId == json.processingResult.identifiedProfileId){
 					console.log("Speaker is: ",targetId );
-					txtInput = "Identified as "+nickName;
+					txtInput = "Identified as "+localStorage.getItem('speaker');
+					localStorage.setItem("speakerRecongized",true);
+					identifySpeaker();
 				}else{
 					txtInput = "You are not authorized to do this."
 					console.log("Speaker not recognized.");
+					localStorage.setItem("speakerRecongized",false);
 				}
 				
+				
 				//var txtInput = document.querySelector('#log');
-				var voiceList = document.querySelector('#voiceList');
-				var btnSpeak = document.querySelector('#btnSpeak');
-				var synth = window.speechSynthesis;
-				var voices = [];
+				// var voiceList = document.querySelector('#voiceList');
+				// var btnSpeak = document.querySelector('#btnSpeak');
+				
+				// var voices = [];
 				//PopulateVoices();
 				// if(speechSynthesis !== undefined){
 				// 	speechSynthesis.onvoiceschanged = PopulateVoices;
 				// }
-				
+				var synth = window.speechSynthesis;
 				var toSpeak = new SpeechSynthesisUtterance(txtInput);
 				
 				synth.speak(toSpeak);

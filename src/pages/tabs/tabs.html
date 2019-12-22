@@ -15,12 +15,12 @@
     <div padding>
       <p>Click "Make Voice Payment" below to initiate a voice based transfer.</p>
     </div>
-    <div padding>
+    <!-- <div padding>
       <button ion-button color="primary" block (click)="makePayment()">{{ 'VOICE_PAYMENT_BUTTON' | translate }}</button>
-    </div>
+    </div> -->
   </div>
   <div  *ngIf="listening">
-    <div padding style="margin-left: 120px;">
+    <div padding style="margin-left: 25%;">
       <circle-progress 
       [percent]="getPercent()"
     [animation]="false"
@@ -36,3 +36,22 @@
   </div>
   
 </ion-content>
+<ion-footer>
+  <!-- <button ion-button color="primary" block (click)="cancelPayment()">{{ 'CANCEL_BUTTON' | translate }}</button> -->
+
+  <ion-grid *ngIf="!listening">
+    <ion-row >
+      <ion-col col-6>
+        <button ion-button full (click)="makePayment()">
+          {{ 'VOICE_PAYMENT_BUTTON' | translate }}
+        </button>
+      </ion-col>
+      <ion-col col-6>
+        <button ion-button full (click)="doLogout()">
+          Logout
+        </button>
+      </ion-col>
+    </ion-row>
+    </ion-grid>
+    <button *ngIf="paymentConfrimed" ion-button color="primary" block (click)="goHome()">Home</button>
+</ion-footer>

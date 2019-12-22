@@ -9,6 +9,7 @@
 
   <link rel="icon" type="image/x-icon" href="assets/icon/favicon.ico">
   <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <meta name="theme-color" content="#4e8ef7">
 
   <!-- add to homescreen for ios -->
@@ -42,20 +43,67 @@
 
     var recorder;
     var audio_context;
+    var spokenText = '';
+    var listeningDone = false;
     artyom =  new Artyom();
+
+    var defaultText = "Transfer 500 Rupees to Karthik"
+    //parseString();
+
+    function parseString(spokenText){
+      console.log("parseString() with ",spokenText)
+      defaultText = localStorage.getItem("spokenText") || spokenText;
+      if(defaultText.toLowerCase().startsWith("transfer") ||defaultText.toLowerCase().startsWith("pay") ||defaultText.toLowerCase().startsWith("send")){
+        var amount = defaultText.split(" ")[1];
+        var payeeContactName = defaultText.split(" ")[4];
+        console.log("registering statement in localStorage...")
+        localStorage.setItem("amount",amount);
+        localStorage.setItem("payeeContactName",payeeContactName);
+        //console.log(amount,' to ',payeeContactName);
+      }
+    }
+
     var settings = {
       continuous:false, // Don't stop never because i have https connection
       onResult:function(text){
           // text = the recognized text
-          console.log(">>>>>> you sspoke:",text);
+          console.log(">>>>>> you spoke:",text);
+          if(text!=''){
+            spokenText = text;
+          }
+            
       },
       onStart:function(){
           console.log("Dictation started by the user");
       },
       onEnd:function(){
-          alert("Dictation stopped by the user");
+        listeningDone = true;
+        console.log("Dictation stopped by the user");
+        console.log("Final Text: "+spokenText);
       }
 };
+
+  function identifySpeaker(){
+    var textInterval = setInterval(()=>{
+    console.log("Searching for spokenText..")
+    if(localStorage.getItem("listening")!=null && localStorage.getItem("listening")!="true" &&
+      localStorage.getItem("recognitionDone")!=null && localStorage.getItem("recognitionDone")=="succeeded"){
+      if(localStorage.getItem("speakerRecongized")!=null && localStorage.getItem("speakerRecongized")=="true"){
+        clearInterval(textInterval);
+        localStorage.removeItem("spokenText");
+        localStorage.setItem("spokenText",spokenText);
+        setTimeout(()=>{
+          parseString(spokenText);
+        },500)
+        
+      }
+      clearInterval(textInterval);
+    }
+    
+  },1000);
+  }
+  
+
     var UserDictation = artyom.newDictation(settings);
     function onMediaSuccess(stream, callback, secondsOfAudio,captureText) {
         audio_context = audio_context || new window.AudioContext;
