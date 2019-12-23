@@ -16,9 +16,13 @@ export class ItemDetailPage {
   amount: any = "";
   paymentConfrimed:any=false;
   payeeUnknown:boolean = false;
+  cmdInvalid:boolean = false;
+  synth:any ;
+	toSpeak:any;
   constructor(public navCtrl: NavController, navParams: NavParams, items: Items) {
     this.item = navParams.get('item') || items.defaultItem;
     //parseString();
+    
   }
 
   payee1 = {
@@ -34,16 +38,13 @@ export class ItemDetailPage {
     "vpa":"961109681@upi"
   }
   payee4 = {
-    "name":"Sandesh Nayak",
+    "name":"Prashanti Kotaru",
     "vpa":"961109681@upi"
   }
-  payee5 = {
-    "name":"Ramya Adibhatla",
-    "vpa":"6303607976@upi"
-  }
+  
 
   ngOnInit(){
-    
+    this.synth = window.speechSynthesis;
     let interval = setInterval(() => {
       this.amount = localStorage.getItem("amount");
       this.payeeName = localStorage.getItem("payeeContactName");
@@ -51,7 +52,8 @@ export class ItemDetailPage {
         clearInterval(interval);
         this.getPayeeDetails(this.payeeName)
       }
-      
+      this.cmdInvalid = localStorage.getItem("cmdInvalid") == "true";
+      console.log(" this.cmdInvalid ", this.cmdInvalid);
     }, 500);
     
 
@@ -71,11 +73,11 @@ export class ItemDetailPage {
     else if(this.payeeName.toLowerCase() == "sandesh"){
       this.payeeName = this.payee3.name;
       this.vpaAddress = this.payee3.vpa;
+    }else if(this.payeeName.toLowerCase() == "prashanti"){
+      this.payeeName = this.payee4.name;
+      this.vpaAddress = this.payee4.vpa;
     }
-    else if(this.payeeName.toLowerCase() == "ramya"){
-      this.payeeName = this.payee5.name;
-      this.vpaAddress = this.payee5.vpa;
-    }else{
+    else{
       this.payeeUnknown = true;
     }
   }
@@ -84,6 +86,8 @@ export class ItemDetailPage {
   }
   confirmPayment(){
     this.paymentConfrimed = true;
+    this.toSpeak = new SpeechSynthesisUtterance("Transaction is successful.");
+		this.synth.speak(this.toSpeak);
   }
   goHome(){
     this.navCtrl.push(MainPage);

@@ -333,7 +333,7 @@ function pollForIdentification(location,targetId){
 				localStorage.setItem("recognitionDone",json.status);
 				if(targetId == json.processingResult.identifiedProfileId){
 					console.log("Speaker is: ",targetId );
-					txtInput = "Identified as "+localStorage.getItem('speaker');
+					txtInput = "You are authorized for the transaction.";
 					localStorage.setItem("speakerRecongized",true);
 					identifySpeaker();
 				}else{

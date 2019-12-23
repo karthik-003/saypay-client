@@ -56,10 +56,16 @@
       if(defaultText.toLowerCase().startsWith("transfer") ||defaultText.toLowerCase().startsWith("pay") ||defaultText.toLowerCase().startsWith("send")){
         var amount = defaultText.split(" ")[1];
         var payeeContactName = defaultText.split(" ")[4];
+        if(!/^\d+$/.test(amount)){
+          localStorage.setItem("cmdInvalid","false");
+        }
         console.log("registering statement in localStorage...")
         localStorage.setItem("amount",amount);
         localStorage.setItem("payeeContactName",payeeContactName);
+        localStorage.setItem("cmdInvalid","false");
         //console.log(amount,' to ',payeeContactName);
+      }else{
+        localStorage.setItem("cmdInvalid","true");
       }
     }
 

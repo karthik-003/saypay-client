@@ -12,7 +12,7 @@
   <div class="item-profile" text-center #profilePic [style.background-image]="'url(' + item.profilePic + ')'">
   </div>
 
-  <div class="item-detail" padding *ngIf="!payeeUnknown">
+  <div class="item-detail" padding *ngIf="!payeeUnknown && !cmdInvalid">
     <h2>Payment Details</h2>
     
     <ion-grid>
@@ -64,17 +64,35 @@
           </div>
         </ion-col>
       </ion-row>
+      <ion-row *ngIf="paymentConfrimed">
+        <ion-col>
+          <div>
+            <h6><b>Status</b></h6>
+          </div>
+        </ion-col>
+        <ion-col>
+          <div>
+            <h6>Success</h6>
+          </div>
+        </ion-col>
+      </ion-row>
     </ion-grid>
-    
+    <p *ngIf="paymentConfrimed">
+      The transaction is successful. 
+    </p>
     <p *ngIf="!paymentConfrimed">
       Kindly verify the above details before you proceed with the payment. In case of failed transaction,
       the amount will be credited back to your account within 48 hours. 
     </p>
   </div>
-  <div padding  >
+  <div padding *ngIf="payeeUnknown" >
       <p>Unknown Payee. Make sure you have the contact saved with the name <b>{{payeeName}}</b> and that number is registered with UPI.</p>
 
   </div>
+  <div padding *ngIf="cmdInvalid" >
+    <p>The command you gave is not valid. Kindly retry.</p>
+
+</div>
 
   <!-- <div padding>
     <button ion-button color="primary" block (click)="cancelPayment()">{{ 'CANCEL_BUTTON' | translate }}</button>
@@ -84,19 +102,19 @@
 <ion-footer>
   <!-- <button ion-button color="primary" block (click)="cancelPayment()">{{ 'CANCEL_BUTTON' | translate }}</button> -->
 
-  <ion-grid *ngIf="!paymentConfrimed && !payeeUnknown">
+  <ion-grid *ngIf="!paymentConfrimed && !payeeUnknown && !cmdInvalid">
     <ion-row >
       <ion-col col-6>
         <button ion-button full (click)="cancelPayment()">
           Cancel Payment
         </button>
       </ion-col>
-      <ion-col col-6>
+      <ion-col col-6 >
         <button ion-button full (click)="confirmPayment()">
           Confirm Payment
         </button>
       </ion-col>
     </ion-row>
     </ion-grid>
-    <button *ngIf="paymentConfrimed || payeeUnknown" ion-button color="primary" block (click)="goHome()">Home</button>
+    <button *ngIf="paymentConfrimed || payeeUnknown || cmdInvalid" ion-button color="primary" block (click)="goHome()">Home</button>
 </ion-footer>
