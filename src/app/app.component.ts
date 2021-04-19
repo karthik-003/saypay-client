@@ -85,6 +85,7 @@ export class MyApp {
     // Reset the content nav to have just this page
     // we wouldn't want the back button to show in this scenario
 	// New comment. 
+	// another new comment.
     this.nav.setRoot(page.component);
   }
 }
