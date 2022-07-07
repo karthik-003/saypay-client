@@ -32,7 +32,7 @@
     "ionic-angular": "3.9.5",
     "ionicons": "3.0.0",
     "microphone-stream": "^5.0.1",
-    "moment": "^2.24.0",
+    "moment": "^2.29.4",
     "nativescript-speech-recognition": "^1.5.0",
     "ng-circle-progress": "^1.5.1",
     "recordrtc": "^5.5.8",
